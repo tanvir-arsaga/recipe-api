@@ -1,5 +1,6 @@
 // db/recipeQueries.js
 const pool = require('../db/db');
+const moment = require('moment');
 const Recipe = require('../models/recipe');
 const CreateRecipeResponse = require('../models/createRecipeResponse');
 const UpdateRecipeResponse = require('../models/updateRecipeResponse');
@@ -33,6 +34,29 @@ const getRecipeById = (id) => {
   });
 };
 
+// GET recipe by ID
+const getSpecificRecipe = (id) => {
+  return new Promise((resolve, reject) => {
+    pool.query('SELECT * FROM recipes WHERE id = ?', [id], (error, results) => {
+      if (error) {
+        reject(error);
+      } else {
+        const recipe = results.map((row) => new CreateRecipeResponse(
+          row.id, 
+          row.title, 
+          row.making_time, 
+          row.serves, 
+          row.ingredients, 
+          row.cost,
+          moment(row.created_at).format('YYYY-MM-DD HH:mm:ss'),
+          moment(row.updated_at).format('YYYY-MM-DD HH:mm:ss')
+          ));
+        resolve(recipe);
+      }
+    });
+  });
+};
+
 // POST new recipe
 const createRecipe = (title, making_time, serves, ingredients, cost) => {
   return new Promise((resolve, reject) => {
@@ -44,17 +68,17 @@ const createRecipe = (title, making_time, serves, ingredients, cost) => {
           reject(error);
         } else {
           const insertedId = results.insertId;
-          getRecipeById(insertedId)
+          getSpecificRecipe(insertedId)
             .then((row) => {
               const insertedRecipe = new CreateRecipeResponse(
-                row.id,
-                row.title,
-                row.making_time,
-                row.serves,
-                row.ingredients,
-                row.cost,
-                row.created_at,
-                row.updated_at
+                row[0].id,
+                row[0].title,
+                row[0].making_time,
+                row[0].serves,
+                row[0].ingredients,
+                row[0].cost,
+                row[0].created_at,
+                row[0].updated_at
               );
               resolve(insertedRecipe);
             })
