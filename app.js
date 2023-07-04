@@ -5,6 +5,8 @@ const recipeRoutes = require('./routes/recipe');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 // Use recipe routes
 app.use('/recipes', recipeRoutes);

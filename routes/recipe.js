@@ -8,7 +8,7 @@ const router = express.Router();
 router.get('/', async (req, res) => {
   try {
     const recipes = await getAllRecipes();
-    res.json(recipes);
+    res.json({ recipes: recipes });
   } catch (error) {
     console.error('Error retrieving recipes:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -21,7 +21,7 @@ router.get('/:id', async (req, res) => {
   try {
     const recipe = await getRecipeById(id);
     if (recipe) {
-      res.json(recipe);
+      res.json({message: 'Recipe details by id', recipe: recipe});
     } else {
       res.status(404).json({ error: 'Recipe not found' });
     }
@@ -33,23 +33,32 @@ router.get('/:id', async (req, res) => {
 
 // POST new recipe
 router.post('/', async (req, res) => {
-  const { name, ingredients, instructions } = req.body;
+  const title = req.body.title;
+  const making_time = req.body.making_time
+  const serves = req.body.serves;
+  const ingredients = req.body.ingredients;
+  const cost = req.body.cost;
+  console.log(req.body)
   try {
-    const newRecipeId = await createRecipe(name, ingredients, instructions);
-    res.status(201).json({ id: newRecipeId, message: 'Recipe created successfully' });
+    const newRecipe = await createRecipe(title, making_time, serves, ingredients, cost);
+    res.status(201).json({ message: 'Recipe successfully created!', recipe: newRecipe });
   } catch (error) {
     console.error('Error creating recipe:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: 'Recipe creation failed!', required: "title, making_time, serves, ingredients, cost" });
   }
 });
 
-// PUT update recipe
+// PATCH update recipe
 router.patch('/:id', async (req, res) => {
   const { id } = req.params;
-  const { name, ingredients, instructions } = req.body;
+  const title = req.body.title;
+  const making_time = req.body.making_time
+  const serves = req.body.serves;
+  const ingredients = req.body.ingredients;
+  const cost = req.body.cost;
   try {
-    await updateRecipe(id, name, ingredients, instructions);
-    res.json({ message: 'Recipe updated successfully' });
+    const updatedRecipe = await updateRecipe(id, title, making_time, serves, ingredients, cost);
+    res.json({ message: 'Recipe successfully updated!', recipe: updatedRecipe });
   } catch (error) {
     console.error('Error updating recipe:', error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -61,10 +70,10 @@ router.delete('/:id', async (req, res) => {
   const { id } = req.params;
   try {
     await deleteRecipe(id);
-    res.json({ message: 'Recipe deleted successfully' });
+    res.json({ message: 'Recipe successfully removed!' });
   } catch (error) {
     console.error('Error deleting recipe:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ message: 'No recipe found' });
   }
 });
 
