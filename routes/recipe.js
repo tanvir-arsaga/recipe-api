@@ -41,10 +41,10 @@ router.post('/', async (req, res) => {
   console.log(req.body)
   try {
     const newRecipe = await createRecipe(title, making_time, serves, ingredients, cost);
-    res.status(201).json({ message: 'Recipe successfully created!', recipe: newRecipe });
+    res.status(200).json({ message: 'Recipe successfully created!', recipe: newRecipe });
   } catch (error) {
     console.error('Error creating recipe:', error);
-    res.status(500).json({ message: 'Recipe creation failed!', required: "title, making_time, serves, ingredients, cost" });
+    res.status(200).json({ message: 'Recipe creation failed!', required: "title, making_time, serves, ingredients, cost" });
   }
 });
 
