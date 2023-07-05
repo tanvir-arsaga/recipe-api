@@ -68,23 +68,25 @@ const createRecipe = (title, making_time, serves, ingredients, cost) => {
           reject(error);
         } else {
           const insertedId = results.insertId;
-          getSpecificRecipe(insertedId)
-            .then((row) => {
-              const insertedRecipe = new CreateRecipeResponse(
-                row[0].id,
-                row[0].title,
-                row[0].making_time,
-                row[0].serves,
-                row[0].ingredients,
-                row[0].cost,
-                row[0].created_at,
-                row[0].updated_at
-              );
-              resolve(insertedRecipe);
-            })
-            .catch((error) => {
-              reject(error);
-            });          
+          const insertedRecipe = getSpecificRecipe(insertedId);
+          resolve(insertedRecipe);
+          // getSpecificRecipe(insertedId)
+          //   .then((row) => {
+          //     const insertedRecipe = new CreateRecipeResponse(
+          //       row[0].id,
+          //       row[0].title,
+          //       row[0].making_time,
+          //       row[0].serves,
+          //       row[0].ingredients,
+          //       row[0].cost,
+          //       row[0].created_at,
+          //       row[0].updated_at
+          //     );
+          //     resolve(insertedRecipe);
+          //   })
+          //   .catch((error) => {
+          //     reject(error);
+          //   });          
         }
       }
     );
